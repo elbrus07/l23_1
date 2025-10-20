@@ -1,0 +1,119 @@
+
+#include <iostream>
+#include <cmath>
+/*
+int main()
+{
+    setlocale(LC_ALL, "RU");
+    
+    int a;
+    
+    std::cout << "Введите сторону квадрата:";
+    std::cin >> a;
+    std::cout << "S квадрата = " << (a*a);
+    
+    
+    return 0;
+}
+*/
+
+//number 2 //
+/*
+int main()
+{
+    setlocale(LC_ALL,"RU");
+    
+    double t,s;
+    
+    std::cout << "Введите время в минутах:";
+    std::cin >> t;
+    std::cout << "Введите расстояние в километрах:";
+    std::cin >> s;
+    std::cout << "Скорость в м/с равна:" << ((s*1000)/(t*60));
+    
+    return 0;
+}
+*/
+
+//number 3//
+/*
+int main(){
+    setlocale(LC_ALL,"RU");
+    double x,y,g;
+    
+    std::cout << "Введите катеты треугольника:";
+    std::cin >> x >> y;
+    g = pow((y*y+x*x),(0.5));
+    std::cout << "S = " << ((x*y)/2) << " \nГипотенуза = " << g << "\nP = " << (x+y+g);
+    
+    return 0;
+    
+}
+*/
+
+//number 4//
+/*
+int main()
+{
+    setlocale(LC_ALL,"RU");
+    
+    int c;
+    std::cout << "Введите градусы по Цельсия:";
+    std::cin >> c;
+    std::cout << "Градусы по Фаренгейта:" << (c*9/5+32);
+    return 0;
+}
+*/
+
+//number 5//
+
+int main(){
+    setlocale(LC_ALL,"RU");
+    int x,y,a,k;
+    
+    std::cout << "Введите вес и цену конфет";
+    std::cin >> x >> a;
+    std::cout << "\nЧтобы опредилить сколько стоит другой вес введите его:";
+    std::cin >> y;
+    std::cout << y << " кг стоит - " << (a*y/x);
+    std::cout << "\nВведите цену на которую хотите купить конфеты:" << std::endl;
+    std::cin >> k;
+    std::cout << (k/(a/x)) << " Кг можно купить на k рублей";
+    return 0;
+}
+
+
+//number 6//
+
+int main()
+{
+    int w,m,y;
+    
+    std::cout <<"Введите количество недель, месяцев, лет чтобы узнать количество дней";
+    std::cin >> w >> m >> y;
+    std::cout << (w*7+m*30+y*365) << "дней прошло за это время";
+    return 0;
+}
+
+//number 7//
+int main()
+{
+    int r,k,n,intk;
+    
+    std::cout <<"Введите стоимость булочки (R рублей K копеек) и количество булочек";
+    std::cin >> r >> k >> n;
+    intk = k*n/100;
+    std::cout << (r*n+intk) << " рублей " << (k*n-intk*100) << " копеек";
+    return 0;
+}
+
+//number 8//
+int main()
+{
+    double a,b,c;
+    
+    std::cout <<"Введите количество учеников в 3 классах ";
+    std::cin >> a >> b >> c;
+    std::cout << (ceil(a/2)+ceil(b/2)+ceil(c/2)) << " парт нужно";
+    return 0;
+}
