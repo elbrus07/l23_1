@@ -1,0 +1,121 @@
+#include <iostream>
+using namespace std;
+
+int main() {
+    // Задача 1: Периметр и площадь квадрата
+    int side;
+    cout << "Введите сторону квадрата: ";
+    cin >> side;
+    cout << "Периметр: " << 4 * side << endl;
+    cout << "Площадь: " << side * side << endl;
+    cout << endl;
+
+    // Задача 2: Скорость в м/с
+    int minutes;
+    double kilometers;
+    cout << "Введите время в минутах: ";
+    cin >> minutes;
+    cout << "Введите расстояние в километрах: ";
+    cin >> kilometers;
+    double meters = kilometers * 1000;
+    double seconds = minutes * 60;
+    double speed = meters / seconds;
+    cout << "Скорость: " << speed << " м/с" << endl;
+    cout << endl;
+
+    // Задача 3: Прямоугольный треугольник
+    double a, b;
+    cout << "Введите первый катет: ";
+    cin >> a;
+    cout << "Введите второй катет: ";
+    cin >> b;
+    double c = sqrt(a * a + b * b); // гипотенуза
+    double area = (a * b) / 2;
+    double perimeter = a + b + c;
+    cout << "Гипотенуза: " << c << endl;
+    cout << "Площадь: " << area << endl;
+    cout << "Периметр: " << perimeter << endl;
+    cout << endl;
+
+    // Задача 4: Температура в Фаренгейтах
+    double celsius;
+    cout << "Введите температуру в градусах Цельсия: ";
+    cin >> celsius;
+    double fahrenheit = celsius * 9 / 5 + 32;
+    cout << "Температура в Фаренгейтах: " << fahrenheit << endl;
+    cout << endl;
+
+    // Задача 5: Конфеты
+    double x, a, y, k;
+    cout << "Введите вес конфет (кг): ";
+    cin >> x;
+    cout << "Введите стоимость " << x << " кг конфет (руб): ";
+    cin >> a;
+    cout << "Введите вес для расчета стоимости (кг): ";
+    cin >> y;
+    cout << "Введите сумму для расчета веса (руб): ";
+    cin >> k;
+    
+    double price_per_kg = a / x;
+    double cost_y = price_per_kg * y;
+    double weight_k = k / price_per_kg;
+    
+    cout << "Стоимость " << y << " кг: " << cost_y << " руб" << endl;
+    cout << "На " << k << " руб можно купить: " << weight_k << " кг" << endl;
+    cout << endl;
+
+    // Задача 6: Количество дней
+    int weeks, months, years;
+    cout << "Введите количество недель: ";
+    cin >> weeks;
+    cout << "Введите количество месяцев: ";
+    cin >> months;
+    cout << "Введите количество лет: ";
+    cin >> years;
+    
+    int days = weeks * 7 + months * 30 + years * 365;
+    cout << "Общее количество дней: " << days << endl;
+    cout << endl;
+
+    // Задача 7: Булочки
+    int R, K, N;
+    cout << "Введите рубли за булочку: ";
+    cin >> R;
+    cout << "Введите копейки за булочку: ";
+    cin >> K;
+    cout << "Введите количество булочек: ";
+    cin >> N;
+    
+    int total_kopecks = (R * 100 + K) * N;
+    int total_rubles = total_kopecks / 100;
+    int total_kop = total_kopecks % 100;
+    
+    cout << "К оплате: " << total_rubles << " руб " << total_kop << " коп" << endl;
+    cout << endl;
+
+    // Задача 8: Парты для классов
+    int class1, class2, class3;
+    cout << "Введите количество учащихся в первом классе: ";
+    cin >> class1;
+    cout << "Введите количество учащихся во втором классе: ";
+    cin >> class2;
+    cout << "Введите количество учащихся в третьем классе: ";
+    cin >> class3;
+    
+    int desks1 = (class1 + 1) / 2;
+    int desks2 = (class2 + 1) / 2;
+    int desks3 = (class3 + 1) / 2;
+    
+    int total_desks = desks1 + desks2 + desks3;
+    cout << "Нужно парт: " << total_desks << endl;
+    cout << endl;
+
+    // Задача 9: Следующее четное число
+    int N;
+    cout << "Введите натуральное число: ";
+    cin >> N;
+    int next_even = N + 2 - (N % 2);
+    cout << "Следующее четное число: " << next_even << endl;
+
+    return 0;
+}
