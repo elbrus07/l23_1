@@ -3,7 +3,7 @@ using namespace std;
 
 int main(){
     // 1. Для введённого пользователем целого числа выдать максимальную цифру, минимальную цифру и их произведение
-    
+    /*
     int number;
     cout << "Введите число: ";
     cin >> number;
@@ -13,8 +13,12 @@ int main(){
     int max_digit = 0, min_digit = 9;
     for (; temp > 0; temp = temp / 10) {
         int digit = temp % 10;
-        if (digit > max_digit) max_digit = digit;
-        if (digit < min_digit) min_digit = digit;
+        if (digit > max_digit){
+        	max_digit = digit;
+        }
+        if (digit < min_digit){
+         	min_digit = digit;
+        }
     }
     cout << "FOR: Макс=" << max_digit << " Мин=" << min_digit << " Произв=" << max_digit * min_digit << endl;
     
@@ -39,16 +43,16 @@ int main(){
         temp = temp / 10;
     } while (temp > 0);
     cout << "DO WHILE: Макс=" << max_digit << " Мин=" << min_digit << " Произв=" << max_digit * min_digit << endl;
-    
+    */
 
     // 2. Найти сумму элементов последовательности
-    
+    /*
     int sum = 0;
     int n = 1;
     cout << "Вводите натуральные числа. По окончании введите 0" << endl;
     
     // for
-    for (cin >> n; n != 0; cin >> n) {
+    for (cin >> n; n != 0;) {
         sum = sum + n;
     }
     cout << "FOR: Сумма=" << sum << endl;
@@ -74,9 +78,9 @@ int main(){
     } while (n != 0);
     cout << "DO WHILE: Сумма=" << sum << endl;
     
-
+*/
     // 3. Удалить из числа заданную цифру
-    
+    /*
     int num, digit;
     cout << "Введите число: ";
     cin >> num;
@@ -84,13 +88,14 @@ int main(){
     cin >> digit;
     
     // for
-    temp = num;
+    int temp = num;
     int result = 0, multiplier = 1;
     for (; temp > 0; temp = temp / 10) {
         int d = temp % 10;
         if (d != digit) {
             result = result + d * multiplier;
             multiplier = multiplier * 10;
+            // result = result * 10 + d;
         }
     }
     cout << "FOR: Результат=" << result << endl;
@@ -121,9 +126,9 @@ int main(){
     } while (temp > 0);
     cout << "DO WHILE: Результат=" << result << endl;
     
-
+*/
     // 4. Для каждого натурального числа вывести делители
-    
+    /*
     int N, M;
     cout << "Введите начало и конец промежутка: ";
     cin >> N >> M;
@@ -172,7 +177,7 @@ int main(){
         i++;
     } while (i <= M);
     
-
+*/
     // 5. Таблица умножения
     
     // for
