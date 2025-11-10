@@ -7,17 +7,19 @@ void compress_string() {
     string s;
     cin >> s;
     string result = "";
-    for (int i = 0; i < s.length(); i++) {
+    int n = s.length();
+    
+    for (int i = 0; i < n; i++) {
         char current = s[i];
         int count = 1;
-        while (i + 1 < s.length() && s[i + 1] == current) {
+        while (i + 1 < n && s[i + 1] == current) {
             count++;
             i++;
         }
         result += current;
         result += to_string(count);
     }
-    if (result.length() >= s.length()) {
+    if (result.length() >= n) {
         cout << s << endl;
     } else {
         cout << result << endl;
@@ -59,12 +61,17 @@ void number_to_text() {
             thousands = 0;
         }
         
-        if (thousands == 1) cout << "одна тысяча ";
-        else if (thousands == 2) cout << "две тысячи ";
-        else if (thousands >= 3 && thousands <= 4) cout << ones[thousands] << " тысячи ";
-        else if (thousands > 0) cout << ones[thousands] << " тысяч ";
-        else cout << "тысяч ";
-        
+        if (thousands == 1) {
+        	cout << "одна тысяча ";
+        }else if (thousands == 2) {
+        	cout << "две тысячи ";
+        }else if (thousands >= 3 && thousands <= 4){
+        	cout << ones[thousands] << " тысячи ";
+        }else if (thousands > 0){
+        	cout << ones[thousands] << " тысяч ";
+        }else {
+        	cout << "тысяч ";
+        }
         n = n % 1000;
     }
     
@@ -117,4 +124,7 @@ void is_permutation() {
 }
 
 int main() {
+	//	is_permutation();
+	//compress_string();
+	//number_to_text();
 }
