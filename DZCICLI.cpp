@@ -107,7 +107,7 @@ void remove_digit_for() {
     cin >> n >> digit;
     
     if (n == 0) {
-        cout << (digit == 0 ? 0 : n) << endl;
+        cout << "Result: " << (digit == 0 ? 0 : n) << endl;
         return;
     }
     
@@ -129,7 +129,7 @@ void remove_digit_while() {
     cin >> n >> digit;
     
     if (n == 0) {
-        cout << (digit == 0 ? 0 : n) << endl;
+        cout << "Result: " << (digit == 0 ? 0 : n) << endl;
         return;
     }
     
@@ -287,4 +287,16 @@ void mult_table_dowhile() {
         cout << endl;
         i++;
     } while (i <= 10);
+}
+
+int main() {
+    // Здесь можно вызывать нужные функции для тестирования
+    // Например:
+    // max_min_digit_for();
+    // sum_sequence_while();
+    // remove_digit_for();
+    // find_divisors_while();
+    // mult_table_for();
+    
+    return 0;
 }
