@@ -1,7 +1,9 @@
 #include <iostream>
 #include <string>
 
-
+/*
+	
+*/
 std :: string compress(std::string str) {
   if (str.length() == 0) {
     return str;
@@ -10,16 +12,16 @@ std :: string compress(std::string str) {
   std :: string letter_name = str.substr(0, 1);
   int count = 1;
   int i;
-
-  for (i = 1; i <= str.length(); i += 1) { 
-    if (i < str.length() and str[i] == letter_name[0]) {
+	int n=  str.length();
+  for (i = 1; i <= n; i++) { 
+    if (i < n && str[i] == letter_name[0]) {
       count += 1; }
     else {
       compressed_stroke += letter_name;
       compressed_stroke += std :: to_string(count);
 
-      if (i < str.length()) {
-        letter_name = str.substr (i, 1);
+	  if (i < n){
+      	letter_name = str.substr (i, 1);
         count = 1;
       }
     }      
@@ -31,7 +33,7 @@ std :: string compress(std::string str) {
   return compressed_stroke;
 }
 
-//для 2-го задания
+//для 3-го задания
 
 std :: string compress_all(std::string str) {
   if (str.length() == 0) {
@@ -78,6 +80,8 @@ int isperestanovka (std :: string str1, std :: string str2) {
   std :: string stroke1_elements = compress_all(str1);
   std :: string stroke2_elements = compress_all(str2);
 
+	std::cout<< stroke1_elements<< "  "<< stroke2_elements<<"\n";
+
   for (i = 0; i < stroke1_elements.length(); i += 2) {
     letter1 = stroke1_elements[i];
     number1 = stroke1_elements[i + 1];
@@ -89,7 +93,7 @@ int isperestanovka (std :: string str1, std :: string str2) {
         flag = 1;
         break;
       }
-    }
+    }	// a2b1a1c1    b1a3c1
   
     if (flag == 0) {
       return 0;
