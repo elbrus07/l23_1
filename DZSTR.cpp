@@ -1,94 +1,99 @@
 #include <iostream>
 #include <string>
+#include <algorithm>
 using namespace std;
 
-// Сжатие строк с использованием счетчика повторяющихся символов
+// Сжатие строки
 void compress_string() {
     string s;
     cin >> s;
     string result = "";
-    for (int i = 0; i < s.length(); i++) {
+    
+    for (int i = 0; i < s.length(); ) {
         char current = s[i];
-        int count = 1;
-        while (i + 1 < s.length() && s[i + 1] == current) {
+        int count = 0;
+        
+        while (i < s.length() && s[i] == current) {
             count++;
             i++;
         }
+        
         result += current;
         result += to_string(count);
     }
-    if (result.length() >= s.length()) {
-        cout << s << endl;
-    } else {
-        cout << result << endl;
-    }
+    
+    cout << (result.length() < s.length() ? result : s) << endl;
 }
 
-// Вывести число в текстовом виде
+// Число в текст
 void number_to_text() {
     int n;
     cin >> n;
-    
-    string ones[] = {"", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять"};
-    string teens[] = {"десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать"};
-    string tens[] = {"", "", "двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят", "восемьдесят", "девяносто"};
-    string hundreds[] = {"", "сто", "двести", "триста", "четыреста", "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот"};
     
     if (n == 0) {
         cout << "ноль" << endl;
         return;
     }
     
+    string ones[] = {"", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять"};
+    string teens[] = {"десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать", 
+                     "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать"};
+    string tens[] = {"", "", "двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят", "восемьдесят", "девяносто"};
+    string hundreds[] = {"", "сто", "двести", "триста", "четыреста", "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот"};
+    
     if (n < 0) {
         cout << "минус ";
         n = -n;
     }
     
+    // Тысячи
     if (n >= 1000) {
-        int thousands = n / 1000;
+        int th = n / 1000;
         
-        if (thousands >= 100) {
-            cout << hundreds[thousands / 100] << " ";
-            thousands = thousands % 100;
+        if (th >= 100) {
+            cout << hundreds[th / 100] << " ";
+            th %= 100;
         }
-        if (thousands >= 20) {
-            cout << tens[thousands / 10] << " ";
-            thousands = thousands % 10;
-        } else if (thousands >= 10) {
-            cout << teens[thousands - 10] << " ";
-            thousands = 0;
+        if (th >= 20) {
+            cout << tens[th / 10] << " ";
+            th %= 10;
+        } else if (th >= 10) {
+            cout << teens[th - 10] << " ";
+            th = 0;
         }
         
-        if (thousands == 1) cout << "одна тысяча ";
-        else if (thousands == 2) cout << "две тысячи ";
-        else if (thousands >= 3 && thousands <= 4) cout << ones[thousands] << " тысячи ";
-        else if (thousands > 0) cout << ones[thousands] << " тысяч ";
+        if (th == 1) cout << "одна тысяча ";
+        else if (th == 2) cout << "две тысячи ";
+        else if (th == 3 || th == 4) cout << ones[th] << " тысячи ";
+        else if (th > 0) cout << ones[th] << " тысяч ";
         else cout << "тысяч ";
         
-        n = n % 1000;
+        n %= 1000;
     }
     
+    // Сотни
     if (n >= 100) {
         cout << hundreds[n / 100] << " ";
-        n = n % 100;
+        n %= 100;
     }
     
+    // Десятки и единицы
     if (n >= 20) {
         cout << tens[n / 10] << " ";
-        n = n % 10;
+        n %= 10;
     } else if (n >= 10) {
         cout << teens[n - 10] << " ";
         n = 0;
     }
     
     if (n > 0) {
-        cout << ones[n] << " ";
+        cout << ones[n];
     }
     
     cout << endl;
 }
 
-//  Проверить, является ли одна строка перестановкой другой
+// Проверка перестановки
 void is_permutation() {
     string s1, s2;
     cin >> s1 >> s2;
@@ -98,23 +103,12 @@ void is_permutation() {
         return;
     }
     
-    string s2_copy = s2;
-    for (int i = 0; i < s1.length(); i++) {
-        bool found = false;
-        for (int j = 0; j < s2_copy.length(); j++) {
-            if (s1[i] == s2_copy[j]) {
-                s2_copy.erase(j, 1);
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
-            cout << "false" << endl;
-            return;
-        }
-    }
-    cout << "true" << endl;
+    sort(s1.begin(), s1.end());
+    sort(s2.begin(), s2.end());
+    
+    cout << (s1 == s2 ? "true" : "false") << endl;
 }
 
 int main() {
+    return 0;
 }
