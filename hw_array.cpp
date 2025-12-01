@@ -58,8 +58,11 @@ void randomBin(int len){
     // Генерация массива
     for (int i = 0; i < len; i++) {
         arr[i] = rand() % 2;
-        if (arr[i] == 0) zero++;
-        else one++;
+        if (arr[i] == 0){
+        	 zero++;
+       	}else{
+          	one++;
+        }
     }
 
     
@@ -133,7 +136,7 @@ void minMaxReplace(int (&arr)[N]){
   
   cout<<endl;
 } 
-
+//Дан массив чисел. Заменить каждый элемент с чётным индексом на соседний слева элемент.
 template <size_t len>
 void neighborReplace(int(&arr)[len]){
   for (int i = 1; i < len; i++){
