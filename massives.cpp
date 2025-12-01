@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include <string>
 #include <clocale>
-#include <windows.h>
+//#include <windows.h>
 using namespace std;
 
     //1.  Организовать ввод элементов массива с клавиатуры. Размер массива также должен задаваться пользователем.
@@ -106,7 +106,7 @@ void create_null_one_mass() {
     Функция для создания массива с равным количеством нулей и единиц как его элементов
     Возврат/вывод - пусто / полученный массив
     */
-    const int length = 12;
+    int length = 12;
 
     int mass[length];
 
@@ -271,7 +271,7 @@ int main() {
 
     //create_mass();
     //create_random_mass(1, 15);
-    //create_null_one_mass();
+    create_null_one_mass();
 
     //int result = calculate_sum();
     //cout << "Результат: " << result;  
