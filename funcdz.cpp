@@ -74,7 +74,7 @@ int main()
 /*
 int counter(int x, int list[],int listLength) {
 	int k = {0};
-	for (int i = {0}; i <= listLength; i++) {
+	for (int i{0}; i <= listLength; i++) {
 		if (list[i] == x) {
 			k++;
 		}
