@@ -25,6 +25,7 @@ double getVector(){
   return perimetr;}
   
   //Написать функцию табуляции функции fx=x−1 в точках x = 1,2,3,..., 12.\
+  
   void tabulation(){
   cout<<"x"<<"\t"<<"y"<<endl;
   double y;
