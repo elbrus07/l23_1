@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #dialog, #mess{
+            background-color: #00000025;
+            backdrop-filter: blur(50px);
+            width: 30%;
+        }
+
+        ::placeholder{
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <button onclick="dialog.showModal()"></button>
+    <dialog id="dialog">
+        <div>
+            <input type="text" placeholder="NAME" id="name">
+            <input type="text" placeholder="Surname" id="surname">
+            <input type="text" placeholder="phone" value = "+7" id="phone">
+            <select name="" id="date">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                
+            </select>
+            <input type="date" id="date2">
+            <input type="time">
+            <button onclick="cancel()">CANCEL</button>
+            <button onclick="send()">SEND</button>
+        </div></dialog>
+
+
+
+        <dialog id="mess">
+            <div><h1>SUCCESS</h1></div>
+            
+        </dialog>
+
+        <script>
+            function cancel(){
+                let dialog = document.getElementById('dialog')
+                let inputs = document.getElementsByTagName('input')
+                for (i in inputs){
+                    inputs[i].value = ''
+
+                }
+                dialog.close()
+            }
+            function send(){
+                let name = document.getElementById('name').value
+                let surname = document.getElementById('surname').value
+                let phone = document.getElementById('phone').value
+                let date = document.getElementById('date').value
+                let date2 = document.getElementById('date2').value
+
+                console.log(name, surname, phone, date, date2)
+
+                let dialog = document.getElementById('dialog')
+                let inputs = document.getElementsByTagName('input')
+                for (i in inputs){
+                    inputs[i].value = ''
+
+                }
+                dialog.close()
+
+                let mess = document.getElementById('mess')
+                mess.showModal()
+                setTimeout(() => {mess.close()}, 2000)
+            }
+        </script>
+    
+</body>
+</html>
