@@ -69,17 +69,102 @@ void read(vector<string> &com){
                 }
                 cout<<endl;
                 stroke.clear();
-            
-
-
-
-
 
         }
     }
     
 
 }
+
+
+
+void add(vector<string> &com){
+    string filename = com[1];
+    int comLen = com.size();
+    int toPos = 2;
+    int valPos = -1;
+
+
+    vector<string> cols;
+    vector<string> vals;
+
+    
+
+
+    if(comLen < 6 || com[2] != "TO"){
+        cout<<"SyntaxError:"<<endl<<"USE: ADD db_file TO [columns] VAL [values]";
+        return;
+    }
+
+    for (int i = 0; i < comLen; i ++){
+        if (com[i] == "VAL"){
+            valPos = i;
+            break;
+        }
+    }
+
+    for(int i = toPos + 1; i < valPos; i ++){
+        cols.push_back(com[i]);
+    }
+
+    for (int i = valPos + 1; i < comLen; i++){
+        vals.push_back(com[i]);
+    }
+
+    if(cols.size() != vals.size()){
+        cout<<"SyntaxError:"<<endl<<"the number of columns does not match the number of values";
+        return;
+    }
+
+    ifstream inFile(filename);
+    string str;
+    getline(inFile, str);
+    vector<string> header = strToArray(str);
+    inFile.close();
+
+
+
+    ofstream outFile(filename, ios::app);
+    outFile<<"\n";
+    if(!outFile.is_open()){
+        cout<<"OpenError:"<<endl<<"File opening error";
+        return;
+    }
+
+    for(int i = 0; i < header.size(); i++){
+        if(i > 0){
+            outFile<<"|";
+        }
+        bool mark = false;
+
+        for(int j = 0; j < cols.size(); j++){
+            if(header[i] == cols[j]){
+                outFile<<vals[j];
+                mark = true;
+                break;
+            }
+        }
+
+        if(!mark){
+            outFile<<" ";
+        }
+    }
+    
+
+    outFile.close();
+
+}
+
+
+
+// void sort(vector<string> $com){
+//     fileName = com[1];
+//     ifstream inFile(fileName);
+//     if (com[3] == "upper"){
+//         while(){}
+//     }
+    
+// }
 
 
 
@@ -92,5 +177,9 @@ int main(int argc, char** argv){
     }
     if(string(argv[1]) == "READ"){
         read(command);
-    }
+    }else if (string(argv[1]) == "ADD"){
+        add(command);}
+    // }else if(string(argv[1] == "SORT")){
+    //     sort(command);
+    // }
 }
