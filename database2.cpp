@@ -34,10 +34,16 @@ void read(vector<string> &com){
     vector<int> index;
     string str;
     ifstream file(com[1]);
+
+    if (!getline(file, str)) {
+        cout << "fileError: file "<<com[1] <<" is empty" << endl;
+        file.close();
+        return;
+    }
     getline(file, str);
     header = strToArray(str);
     for(int i = 0; i < header.size(); i++){
-        cout<<header[i]<<"\t";}
+        cout<<header[i]<<" | ";}
         cout<<endl;
 
     if (len == 2){
@@ -45,7 +51,7 @@ void read(vector<string> &com){
             while(getline(file, str)){
                 stroke = strToArray(str);
                 for(int i = 0; i < stroke.size(); i++){
-                    cout<<stroke[i]<<"\t";
+                    cout<<stroke[i]<<" | ";
 
                 }
                 cout<<endl;
@@ -63,7 +69,7 @@ void read(vector<string> &com){
             while(getline(file, str)){
                 stroke = strToArray(str);
                 for(int i = 0; i < index.size(); i++){
-                    cout<<stroke[index[i]]<<"\t";
+                    cout<<stroke[index[i]]<<" | ";
                     
 
                 }
@@ -157,15 +163,139 @@ void add(vector<string> &com){
 
 
 
-// void sort(vector<string> $com){
-//     fileName = com[1];
-//     ifstream inFile(fileName);
-//     if (com[3] == "upper"){
-//         while(){}
-//     }
+void sort(vector<string> &com) {
     
-// }
-
+    if (com.size() < 6) {  
+        cout << "SyntaxError:" << endl << "USE: SORT file_name TO [columns] VAL [values]" << endl;
+        return;
+    }
+    
+    string filename = com[1];
+    int toPos = 2;
+    
+    // Проверка ключевого слова TO
+    if (com[toPos] != "TO") {
+        cout << "SyntaxError:" << endl << "Please, write 'TO' after file_name" << endl;
+        return;
+    }
+    
+    // Поиск позиции VAL
+    int valPos = -1;
+    for (int i = toPos + 1; i < com.size(); i++) {
+        if (com[i] == "VAL") {
+            valPos = i;
+            break;
+        }
+    }
+    
+    if (valPos == -1) {
+        cout << "SyntaxError:" << endl << "Please, write 'VAL' after [columns]" << endl;
+        return;
+    }
+    
+    if (valPos - toPos < 2) {
+        cout << "SearchError: columns is undefened in command" << endl;
+        return;
+    }
+    
+    if (com.size() - valPos < 2) {
+        cout << "SearchError: values is undefened in command" << endl;
+        return;
+    }
+    
+    
+    vector<string> cols;
+    for (int i = toPos + 1; i < valPos; i++) {
+        cols.push_back(com[i]);
+    }
+    
+    vector<string> vals;
+    for (int i = valPos + 1; i < com.size(); i++) {
+        vals.push_back(com[i]);
+    }
+    
+    
+    if (vals.size() != cols.size()) {
+        cout << "SyntaxError: count of values and columns is different" << endl;
+        return;
+    }
+    
+    
+    ifstream inFile(filename);
+    if (!inFile.is_open()) {
+        cout << "OpenError: Could not open file {" << filename << "}" << endl;
+        return;
+    }
+    
+    
+    string line;
+    if (!getline(inFile, line)) {
+        cout << "fileError: file "<<filename <<" is empty" << endl;
+        inFile.close();
+        return;
+    }
+    
+    vector<string> header = strToArray(line);
+    
+    
+    vector<int> colIndices;
+    for (int i = 0; i < cols.size(); i++) {
+        bool found = false;
+        for (int j = 0; j < header.size(); j++) {
+            if (header[j] == cols[i]) {
+                colIndices.push_back(j);
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            cout << "Not found {" << cols[i] << "} in file" << endl;
+            inFile.close();
+            return;
+        }
+    }
+    
+    
+    for (size_t i = 0; i < header.size(); i++) {
+        cout << header[i];
+        if (i < header.size() - 1) cout << " | ";
+    }
+    cout << endl;
+    
+    
+    int foundCount = 0;
+    while (getline(inFile, line)) {
+        vector<string> row = strToArray(line);
+        
+        
+        if (row.size() != header.size()) continue;
+        
+        
+        bool match = true;
+        for (size_t i = 0; i < colIndices.size(); i++) {
+            int colIndex = colIndices[i];
+            if (colIndex >= row.size() || row[colIndex] != vals[i]) {
+                match = false;
+                break;
+            }
+        }
+        
+        
+        if (match) {
+            for (size_t i = 0; i < row.size(); i++) {
+                cout << row[i];
+                if (i < row.size() - 1) cout << " | ";
+            }
+            cout << endl;
+            foundCount++;
+        }
+    }
+    
+    inFile.close();
+    
+    
+    
+}
 
 
 
@@ -179,7 +309,8 @@ int main(int argc, char** argv){
         read(command);
     }else if (string(argv[1]) == "ADD"){
         add(command);}
-    // }else if(string(argv[1] == "SORT")){
-    //     sort(command);
-    // }
+    else if(string(argv[1]) == "SORT"){
+        sort(command);
+    
+}
 }
