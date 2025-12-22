@@ -35,27 +35,23 @@ void addStudent(string surname, string name, string patronymic,
 // считывает данные всех студентов и выводит их на экран.
 // Использует оператор >> для чтения данных до пробелов.
 // Выводит порядковый номер каждого студента.
-void showAllStudents() {
+int showAllStudents() {
     ifstream file("db_stud.dat");
-    if (file.is_open()) {
-        string surname, name, patronymic, birthDate, group, recordBook;
-        int course, count = 0;
-        
-        while (file >> surname >> name >> patronymic >> birthDate 
-                   >> group >> recordBook >> course) {
-            count++;
-            cout << count << ". " << surname << " " << name << " " 
-                 << patronymic << " - Группа: " << group 
-                 << ", Курс: " << course << endl;
-        }
-        file.close();
-        
-        if (count == 0) {
-            cout << "Нет студентов в базе" << endl;
-        }
-    } else {
-        cout << "Файл не найден" << endl;
+	if (!file.is_open()){
+		return -1;
+	}
+    string surname, name, patronymic, birthDate, group, recordBook;
+    int course, count = 0;
+    
+    while (file >> surname >> name >> patronymic >> birthDate 
+               >> group >> recordBook >> course) {
+        count++;
+        cout << count << ". " << surname << " " << name << " " 
+             << patronymic << " - Группа: " << group 
+             << ", Курс: " << course << endl;
     }
+    file.close();
+    return count;
 }
 
 
