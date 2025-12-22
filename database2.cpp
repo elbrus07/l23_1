@@ -173,13 +173,13 @@ void sort(vector<string> &com) {
     string filename = com[1];
     int toPos = 2;
     
-    // Проверка ключевого слова TO
+    
     if (com[toPos] != "TO") {
         cout << "SyntaxError:" << endl << "Please, write 'TO' after file_name" << endl;
         return;
     }
     
-    // Поиск позиции VAL
+    
     int valPos = -1;
     for (int i = toPos + 1; i < com.size(); i++) {
         if (com[i] == "VAL") {
