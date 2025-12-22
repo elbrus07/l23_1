@@ -347,8 +347,6 @@ int main() {
             else {
                 cout << "\nСтудент(ы) успешно найден(ы)!" << endl;
             }
-
-            ;
         }
         else if (choice == 7) {
             if (count_students() == 0) {
