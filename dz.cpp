@@ -102,8 +102,7 @@ void selectByKurs(int kurs) {
     }
 
     /* сортировка по имени */
-    sort(result.begin(), result.end(),
-         [](const Student& a, const Student& b) {
+    sort(result.begin(), result.end(),[](const Student& a, const Student& b) {
              return a.name < b.name;
          });
 
