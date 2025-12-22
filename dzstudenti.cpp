@@ -63,7 +63,7 @@ void showByKurs(string filename, int needKurs)
         getline(ss, s.book, ';');
         getline(ss, kursStr, ';');
         s.kurs = stoi(kursStr);
-        if (s.kurs >= needKurs)
+        if (s.kurs == needKurs)
         {
             cout << s.fam << " "
                  << s.name << " "
