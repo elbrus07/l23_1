@@ -1,40 +1,34 @@
 #include <iostream>
+#include <string>
+
 /*
-	Циклы в С++
-	цикл for 
-	for(инициализация; условие; инкремент){		- заголовок цикла
-		тело цикла
+	Функции:
+	тип_возврата имя_функции(список параметров ){
+		тело функции
+		return значение;
 	}
 	
-	Цикл while 
 	
-	Цикл do while	- цикл с постусловием
-	
-	Синтаксис:
-	do{
-		тело цикла
-	} while (условие)
-	
-	break
-	continue
+	Тип_возврата: тип или void (нет возвращаемого значения)
 
+	список параметров: тип имя_параметра, ...
+	
 */
 
-int main(){
 
-//	Пример:
-	for (int i {0}; i < 10; i+=4){
-		std::cout<<i<<"\n";		
+
+
+	string compress(string s){
+		string compressed_string = "";
+		
+		
+		return compressed_string;
+	}
+
+	int main(){
+
+		
 	}
 
 
-	int i {1};
-	for (;i < 5; ){
-		std::cout<<"Привет!"<< i <<"\n";		
-		i++;
-	}
-
-
-	return 0;
-}
 
