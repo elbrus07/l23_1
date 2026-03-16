@@ -14,7 +14,7 @@ Vector2f mathToScreen(float mathX, float mathY) {
 }
 
 // Деления
-void drawMarks(RenderWindow& canvas, Font& textFont) {
+void drawMarks(RenderWindow& canvas) {
     // Горизонтальные деления (ось X)
     for (int val = -8; val <= 8; ++val) {
         if (val == 0) continue;
@@ -109,7 +109,7 @@ int main() {
         canvas.clear(Color::White); 
 
         drawAxes(canvas);
-        drawMarks(canvas, textFont);
+        drawMarks(canvas);
         plotGraph(canvas);
 
         canvas.display();
