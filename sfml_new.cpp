@@ -94,6 +94,25 @@ void draw_func(RenderWindow& window) {
 int main() {
     RenderWindow window(VideoMode({800, 600}), "График x^2");
 
+    
+    while (window.isOpen())
+    {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+
+        window.clear(Color::Black);
+
+        create_dpsk(window, center_x, center_y);
+        draw_func(window);
+
+        window.display();
+    }
+
+    /*
     while (window.isOpen())
     {
         while (const optional event = window.pollEvent())
@@ -109,7 +128,7 @@ int main() {
 
         window.display();
     }
-
+    */
     return 0;
 }
 
