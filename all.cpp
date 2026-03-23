@@ -23,7 +23,7 @@ public:
     }
 
     void Parabola() {
-        float a = 0.1f;
+        float a = 1.f;
 
         for (float x = -10; x <= 10; x += 0.1f) {
             float y = a * x * x;
