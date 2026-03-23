@@ -6,7 +6,7 @@
 using namespace sf;
 using namespace std;
 
-/*
+
 class InteractiveGr {
 public:
     InteractiveGr(float center_x, float center_y, float scale)
@@ -16,7 +16,7 @@ public:
         if (Keyboard::isKeyPressed(Keyboard::Key::Left)) center_x += step
     }
 };
-*/
+
 
 struct Config {
     /*Класс для работы с графиком*/
@@ -30,12 +30,12 @@ struct Config {
     Color graphic_color = Color::White;
     function<float(float)> func = [](float x) { return x * x; };
 };
-/*
+
 class Fonts {
 public:
     Fonts() {
-        filesystem::path path = "C:\\Users\\1\\source\\repos\\sfml_new\\x64\\Debug\\BRLNSR.TTF";
-        if (!font.openFromFile(path)) {
+        filesystem::path path = "~/23_1/LiberationSerif-Regular.ttf";
+        if (!font.loadFromFile(path)) {
             cout << "Шрифт не загружен" << endl;
         }
         else {
@@ -48,7 +48,8 @@ public:
 private:
     Font font;
 };
-*/
+
+
 class CoordSys {
     /*Класс дл построения декартовой системы координат*/
 public:
@@ -197,14 +198,22 @@ private:
     Config cfg;
     CoordSys cs;
     Graphic graph;
-    //Fonts font;
+    Fonts font;
 
     void handle_events(RenderWindow& window) {
         /*Обрабатывает события окна*/
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            // Close window: exit
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+        /*
         while (const optional event = window.pollEvent()) {
             if (event->is<Event::Closed>())
                 window.close();
-        }
+        }*/
     }
 
     void render(RenderWindow& window) {
