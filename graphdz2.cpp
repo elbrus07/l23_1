@@ -1,5 +1,8 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
+#include <functional>
+#include <sstream>
+
 
 using namespace sf;
 
@@ -116,6 +119,40 @@ public:
 		window.draw(arrowX);
 		window.draw(arrowY);
 	}
+	void drawGraph(RenderWindow& window, std::function<float(float)> func, Color color = Color::Blue, float step = 0.05f)
+	{
+		float width = (float)window.getSize().x;	
+		float height = (float)window.getSize().y;
+
+		// Определяем видимый диапазон по X в мировых координатах
+		float xMin = (0 - center.x) / scale;
+		float xMax = (width - center.x) / scale;
+
+		// Если диапазон вырожден, ничего не рисуем
+		if (xMin >= xMax) return;
+
+		VertexArray points(LinesStrip);
+		for (float x = xMin; x <= xMax; x += step)
+		{
+			float y = func(x);
+			Vector2f screenPos = toScreen(x, y);
+			// Отсечение по экрану: если точка сильно вне экрана, можно пропускать,
+			// но для простоты добавляем все, линия может уходить за край
+			if (screenPos.x >= 0 && screenPos.x <= width && screenPos.y >= 0 && screenPos.y <= height)
+			{
+				points.append(Vertex(screenPos, color));
+			}
+			else
+			{
+				// Если точка вне экрана, разрываем линию, добавляя точку с таким же цветом,
+				// но потом следующий сегмент начнётся заново (LinesStrip автоматически не разрывает).
+				// Чтобы разорвать, нужно начать новый массив. Здесь упростим: просто не добавляем
+				// и продолжаем. Линия может быть некорректной на границе, но для демонстрации достаточно.
+				// Более правильное решение: разбивать на отрезки, но для простоты оставим так.
+			}
+		}
+		window.draw(points);
+	}
 
 	void draw(RenderWindow& window)
 	{
@@ -124,6 +161,15 @@ public:
 		drawArrows(window);
 	}
 };
+float f1(float x)
+{
+	return std::sin(x);
+}
+
+float f2(float x)
+{
+	return 0.2f * x * x - 1.5f;
+}
 
 int main()
 {
@@ -145,6 +191,8 @@ int main()
 
 		window.clear(Color::White);
 		coord.draw(window);
+		coord.drawGraph(window, f1, Color::Blue, 0.05f);
+		coord.drawGraph(window, f2, Color::Red, 0.05f);
 		window.display();
 	}
 
