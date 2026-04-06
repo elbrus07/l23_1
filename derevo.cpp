@@ -98,31 +98,31 @@ void drawTree(sf::RenderWindow& window, Node* node,
               sf::Font& font) {
 
     if (!node) return;
-
+	int dy = 90;
     // Линии
     if (node->left) {
         sf::Vertex line[] = {
-            sf::Vertex(sf::Vector2f(x, y)),
-            sf::Vertex(sf::Vector2f(x - offset, y + 80))
+            sf::Vertex(sf::Vector2f(x, y), sf::Color::Black),
+            sf::Vertex(sf::Vector2f(x - offset, y + dy))
         };
         window.draw(line, 2, sf::Lines);
 
-        drawTree(window, node->left, x - offset, y + 80, offset / 1.5, font);
+        drawTree(window, node->left, x - offset, y + dy, offset / 1.5, font);
     }
 
     if (node->right) {
         sf::Vertex line[] = {
-            sf::Vertex(sf::Vector2f(x, y)),
-            sf::Vertex(sf::Vector2f(x + offset, y + 80))
+            sf::Vertex(sf::Vector2f(x, y), sf::Color::Black),
+            sf::Vertex(sf::Vector2f(x + offset, y + dy))
         };
         window.draw(line, 2, sf::Lines);
 
-        drawTree(window, node->right, x + offset, y + 80, offset / 1.5, font);
+        drawTree(window, node->right, x + offset, y + dy, offset / 1.5, font);
     }
 
     // Круг
     sf::CircleShape circle(20);
-    circle.setFillColor(sf::Color::White);
+    //circle.setFillColor(sf::Color::White);
     circle.setOutlineColor(sf::Color::Black);
     circle.setOutlineThickness(2);
     circle.setPosition(x - 20, y - 20);
