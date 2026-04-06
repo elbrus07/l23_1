@@ -24,7 +24,7 @@ public:
         offsetX = 0;
         offsetY = 0;
 
-        font.loadFromFile("assets/fonts/arial.ttf");
+        font.loadFromFile("arial.ttf");
 
         generateParabola();
     }
