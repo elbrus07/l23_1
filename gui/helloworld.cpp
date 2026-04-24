@@ -1,27 +1,54 @@
 #include "helloworld.h"
+#include <cstdlib>
 #include <iostream>
 
 HelloWorld::HelloWorld()
-: m_button("Hello World")   // creates a new button with label "Hello World".
+: m_button_view("View catalog"),
+  m_button_docs("Open Documents"),
+  m_box(Gtk::Orientation::VERTICAL, 10)  // Вертикальное расположение, отступ 10px
 {
-  // Sets the margin around the button.
-  m_button.set_margin(10);
-
-  // When the button receives the "clicked" signal, it will call the
-  // on_button_clicked() method defined below.
-  m_button.signal_clicked().connect(sigc::mem_fun(*this,
-              &HelloWorld::on_button_clicked));
-
-  // This packs the button into the Window (a container).
-  set_child(m_button);
+    // Настройка кнопок
+    m_button_view.set_margin(10);
+    m_button_docs.set_margin(10);
+    
+    // Подключаем сигналы
+    m_button_view.signal_clicked().connect(
+        sigc::mem_fun(*this, &HelloWorld::on_view_catalog_clicked));
+    
+    m_button_docs.signal_clicked().connect(
+        sigc::mem_fun(*this, &HelloWorld::on_open_documents_clicked));
+    
+    // Добавляем кнопки в контейнер
+    m_box.append(m_button_view);
+    m_box.append(m_button_docs);
+    
+    // Помещаем контейнер в окно
+    set_child(m_box);
+    
+    // Устанавливаем размер окна
+    set_default_size(300, 150);
+    set_title("My Application");
 }
 
 HelloWorld::~HelloWorld()
 {
 }
 
-void HelloWorld::on_button_clicked()
+void HelloWorld::on_view_catalog_clicked()
 {
-  std::cout << "Hello World" << std::endl;
+    std::cout << "Viewing catalog..." << std::endl;
+    system("ls -l");
 }
 
+void HelloWorld::on_open_documents_clicked()
+{
+    std::cout << "Opening Documents..." << std::endl;
+    
+    // Для Linux:
+    system("xdg-open ~/Documents");
+    
+    #ifdef _WIN32
+    // Для Windows (если понадобится):
+    // system("start explorer %USERPROFILE%\\Documents");
+    #endif
+}
