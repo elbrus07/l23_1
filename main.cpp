@@ -20,5 +20,22 @@ public:
     show_all_children();
   }
 private:
+  Gtk:: Box main_box{Gtk::ORIENTATION_VERTICAL};
+  Gtk:: Box button_box{Gtk::ORIENTAION_HORIZONTAL};
+  Gtk:: Frame top_frame{"меню"};
+  Gtk:: Frame botton_frame{"Статус"};
+  Gtk:: Button btn_new{"новый"}
+  Gtk:: Button btn_open{"открыть"}
+  Gtk:: Button btn_save{"созранить"};
+  Gtk:: ScrolledWindow scroll;
+  Gtk:: Textview text_view;
+  Gtk:: Label status_label;
+}
+int main(int argc, char* argv[]){
+  auto app = Gtk:: Application:: create(argc, argv,"org.example.notepad");
+  MyWindow window;
+  return app->run(window);
+}
+
   
     
