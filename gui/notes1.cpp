@@ -1,16 +1,16 @@
 #include <gtkmm.h>
 
-class TextEditorUI : public Gtk::Window {
+class TextEditorUI : public Gtk::ApplicationWindow {
 public:
     TextEditorUI() {
         set_title("Text Editor UI (gtkmm 4)");
         set_default_size(600, 400);
 
-        // Главный контейнер
+        
         vbox.set_orientation(Gtk::Orientation::VERTICAL);
         set_child(vbox);
 
-        // === Actions (пустые заглушки) ===
+        
         auto action_open = Gio::SimpleAction::create("open");
         action_open->signal_activate().connect(
             [](const Glib::VariantBase&) {});
@@ -26,7 +26,7 @@ public:
             [this](const Glib::VariantBase&) { close(); });
         add_action(action_exit);
 
-        // === Menu model ===
+        
         auto menu = Gio::Menu::create();
         auto file_menu = Gio::Menu::create();
 
@@ -39,7 +39,7 @@ public:
         menu_bar.set_menu_model(menu);
         vbox.append(menu_bar);
 
-        // === Текстовая область ===
+        
         scrolled.set_child(text_view);
         text_view.set_wrap_mode(Gtk::WrapMode::WORD);
 
