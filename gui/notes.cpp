@@ -5,54 +5,58 @@
 class TextEditor : public Gtk::Window {
 public:
     TextEditor() {
-        set_title("Simple GTKmm Text Editor");
+        set_title("GTKmm 4 Text Editor");
         set_default_size(600, 400);
 
-        // Layout
-        vbox.set_orientation(Gtk::ORIENTATION_VERTICAL);
-        add(vbox);
+        // Главный контейнер
+        vbox.set_orientation(Gtk::Orientation::VERTICAL);
+        set_child(vbox);
 
-        // Menu
-        auto item_file = Gtk::make_managed<Gtk::MenuItem>("File");
-        menu_bar.append(*item_file);
+        // === Actions ===
+        auto action_open = Gio::SimpleAction::create("open");
+        action_open->signal_activate().connect(sigc::mem_fun(*this, &TextEditor::on_open));
+        add_action(action_open);
 
-        auto file_menu = Gtk::make_managed<Gtk::Menu>();
-        item_file->set_submenu(*file_menu);
+        auto action_save = Gio::SimpleAction::create("save");
+        action_save->signal_activate().connect(sigc::mem_fun(*this, &TextEditor::on_save));
+        add_action(action_save);
 
-        auto item_open = Gtk::make_managed<Gtk::MenuItem>("Open");
-        auto item_save = Gtk::make_managed<Gtk::MenuItem>("Save");
-        auto item_exit = Gtk::make_managed<Gtk::MenuItem>("Exit");
+        auto action_exit = Gio::SimpleAction::create("exit");
+        action_exit->signal_activate().connect(sigc::mem_fun(*this, &TextEditor::on_exit));
+        add_action(action_exit);
 
-        file_menu->append(*item_open);
-        file_menu->append(*item_save);
-        file_menu->append(*item_exit);
+        // === Menu model ===
+        auto menu = Gio::Menu::create();
+        auto file_menu = Gio::Menu::create();
 
-        item_open->signal_activate().connect(sigc::mem_fun(*this, &TextEditor::on_open));
-        item_save->signal_activate().connect(sigc::mem_fun(*this, &TextEditor::on_save));
-        item_exit->signal_activate().connect(sigc::mem_fun(*this, &TextEditor::on_exit));
+        file_menu->append("Open", "win.open");
+        file_menu->append("Save", "win.save");
+        file_menu->append("Exit", "win.exit");
 
-        vbox.pack_start(menu_bar, Gtk::PACK_SHRINK);
+        menu->append_submenu("File", file_menu);
 
-        // Text area
-        scroll.add(text_view);
-        vbox.pack_start(scroll);
+        menu_bar.set_menu_model(menu);
+        vbox.append(menu_bar);
 
-        show_all_children();
+        // === Text area ===
+        scrolled.set_child(text_view);
+        vbox.append(scrolled);
     }
 
 private:
     Gtk::Box vbox;
-    Gtk::MenuBar menu_bar;
-    Gtk::ScrolledWindow scroll;
+    Gtk::PopoverMenuBar menu_bar;
+    Gtk::ScrolledWindow scrolled;
     Gtk::TextView text_view;
 
-    void on_open() {
-        Gtk::FileChooserDialog dialog(*this, "Open File", Gtk::FILE_CHOOSER_ACTION_OPEN);
-        dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
-        dialog.add_button("_Open", Gtk::RESPONSE_OK);
+    void on_open(const Glib::VariantBase&) {
+        Gtk::FileChooserDialog dialog(*this, "Open File",
+                                      Gtk::FileChooser::Action::OPEN);
+        dialog.add_button("_Cancel", Gtk::ResponseType::CANCEL);
+        dialog.add_button("_Open", Gtk::ResponseType::OK);
 
-        if (dialog.run() == Gtk::RESPONSE_OK) {
-            std::ifstream file(dialog.get_filename());
+        if (dialog.run() == Gtk::ResponseType::OK) {
+            std::ifstream file(dialog.get_file()->get_path());
             if (file) {
                 std::string content((std::istreambuf_iterator<char>(file)),
                                      std::istreambuf_iterator<char>());
@@ -61,13 +65,14 @@ private:
         }
     }
 
-    void on_save() {
-        Gtk::FileChooserDialog dialog(*this, "Save File", Gtk::FILE_CHOOSER_ACTION_SAVE);
-        dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
-        dialog.add_button("_Save", Gtk::RESPONSE_OK);
+    void on_save(const Glib::VariantBase&) {
+        Gtk::FileChooserDialog dialog(*this, "Save File",
+                                      Gtk::FileChooser::Action::SAVE);
+        dialog.add_button("_Cancel", Gtk::ResponseType::CANCEL);
+        dialog.add_button("_Save", Gtk::ResponseType::OK);
 
-        if (dialog.run() == Gtk::RESPONSE_OK) {
-            std::ofstream file(dialog.get_filename());
+        if (dialog.run() == Gtk::ResponseType::OK) {
+            std::ofstream file(dialog.get_file()->get_path());
             if (file) {
                 auto text = text_view.get_buffer()->get_text();
                 file << text;
@@ -75,14 +80,13 @@ private:
         }
     }
 
-    void on_exit() {
-        hide();
+    void on_exit(const Glib::VariantBase&) {
+        close();
     }
 };
 
-int main(int argc, char *argv[]) {
-    auto app = Gtk::Application::create(argc, argv, "org.example.texteditor");
+int main(int argc, char* argv[]) {
+    auto app = Gtk::Application::create("org.example.texteditor");
 
-    TextEditor editor;
-    return app->run(editor);
+    return app->make_window_and_run<TextEditor>(argc, argv);
 }
