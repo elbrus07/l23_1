@@ -1,4 +1,7 @@
 #include <gtkmm.h>
+#include <iostream>
+#include <fstream>
+
 
 class TextEditorUI : public Gtk::ApplicationWindow {
 public:
@@ -13,12 +16,12 @@ public:
         
         auto action_open = Gio::SimpleAction::create("open");
         action_open->signal_activate().connect(
-            [](const Glib::VariantBase&) {});
+            [this](const Glib::VariantBase&) {openDoc();});
         add_action(action_open);
 
         auto action_save = Gio::SimpleAction::create("save");
         action_save->signal_activate().connect(
-            [](const Glib::VariantBase&) {});
+            [this](const Glib::VariantBase&) {saveDoc();});
         add_action(action_save);
 
         auto action_exit = Gio::SimpleAction::create("exit");
@@ -42,15 +45,30 @@ public:
         
         scrolled.set_child(text_view);
         text_view.set_wrap_mode(Gtk::WrapMode::WORD);
-
+        
         vbox.append(scrolled);
     }
 
+    
 private:
     Gtk::Box vbox;
     Gtk::PopoverMenuBar menu_bar;
     Gtk::ScrolledWindow scrolled;
     Gtk::TextView text_view;
+    void openDoc(){
+    system("xdg-open ~/Documents");
+    }
+    
+    void saveDoc(){
+std::ofstream outFile("new_text_file.txt");
+auto bufer = text_view.get_buffer();
+        Glib::ustring text = bufer->get_text();
+    outFile<<text;
+    if(!outFile.is_open()){
+        std::cout<<"OpenError:"<<std::endl<<"File opening error";
+        return;
+    }}
+    
 };
 
 int main(int argc, char* argv[]) {
