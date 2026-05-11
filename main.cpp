@@ -100,7 +100,8 @@ private:
 };
 
 int main(int argc, char* argv[]) {
-    auto app = Gtk::Application::create(argc, argv, "org.example.texteditor");
+    auto app = Gtk::Application::create("org.example.texteditor");
     EditorWindow window;
-    return app->run(window);
+	return app->make_window_and_run<EditorWindow>(argc, argv);
+    //return app->run(window);
 }
