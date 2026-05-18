@@ -3,17 +3,17 @@
 #include <sstream>
 #include <string>
 
-class EditorWindow : public Gtk::Window {
+class EditorWindow : public Gtk::ApplicationWindow {
 public:
     EditorWindow() {
         set_title("Текстовый редактор");
         set_default_size(800, 500);
 
-        main_box.set_orientation(Gtk::ORIENTATION_VERTICAL);
-        add(main_box);
+        main_box.set_orientation(Gtk::Orientation::VERTICAL);
+        set_child(main_box);
 
         // Верхняя панель кнопок
-        toolbar_box.set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+        toolbar_box.set_orientation(Gtk::Orientation::HORIZONTAL);
         toolbar_box.set_spacing(8);
 
         btn_new.set_label("Создать");
