@@ -40,6 +40,9 @@ public:
         scrolled.set_expand(true);
         text_view.set_wrap_mode(Gtk::WrapMode::WORD);
         vbox.append(scrolled);
+
+        
+        
     }
 
 private:
@@ -76,19 +79,57 @@ private:
         }
     }
 
-    void saveDoc() {
-        std::ofstream outFile("new_text_file.txt");
-        if (!outFile.is_open()) {
-            std::cerr << "File opening error" << std::endl;
-            return;
-        }
+    void on_file_saved(const Glib::RefPtr<Gio::AsyncResult>& result,
+                   const Glib::RefPtr<Gtk::FileDialog>& dialog) {
+    try {
+        auto file = dialog->save_finish(result);
+        auto filename = file->get_path();
+
+        // Получаем текст из TextView
         auto buffer = text_view.get_buffer();
-        Glib::ustring text = buffer->get_text();
-        outFile << text;
-        outFile.close();
-        
+        auto start = buffer->begin();
+        auto end = buffer->end();
+        std::string content = buffer->get_text(start, end);
+
+        // Сохраняем в файл
+        std::ofstream outFile(filename);
+        if (outFile.is_open()) {
+            outFile << content;
+            outFile.close();
+            std::cout << "Файл сохранён: " << filename << std::endl;
+        } else {
+            std::cerr << "Ошибка: не удалось открыть файл для записи: " << filename << std::endl;
+        }
+    } catch (const Gtk::DialogError& err) {
+        std::cout << "Сохранение отменено." << std::endl;
+    } catch (const Glib::Error& err) {
+        std::cerr << "Ошибка при сохранении: " << err.what() << std::endl;
     }
-};
+}
+
+    void saveDoc() {
+        auto dialog = Gtk::FileDialog::create();
+        dialog->set_title("Сохранить файл");
+        dialog->set_accept_label("Сохранить"); // Текст на кнопке подтверждения
+
+    // Фильтры для сохранения
+        auto filters = Gio::ListStore<Gtk::FileFilter>::create();
+
+        auto filter_text = Gtk::FileFilter::create();
+        filter_text->set_name("Текстовые файлы (*.txt)");
+        filter_text->add_pattern("*.txt");
+        filters->append(filter_text);
+
+        auto filter_any = Gtk::FileFilter::create();
+        filter_any->set_name("Все файлы");
+        filter_any->add_pattern("*");
+        filters->append(filter_any);
+
+        dialog->set_filters(filters);
+
+    // Показываем диалог сохранения
+        dialog->save(*this, sigc::bind(sigc::mem_fun(*this, &TextEditorUI::on_file_saved), dialog));
+};};
 
 int main(int argc, char* argv[]) {
     auto app = Gtk::Application::create("org.example.texteditor.ui");
