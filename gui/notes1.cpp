@@ -62,7 +62,7 @@ private:
         dialog->open(*this, sigc::bind(sigc::mem_fun(*this, &TextEditorUI::on_file_opened), dialog));
     }
 
-    // Тот самый метод, которого не хватало
+    
     void on_file_opened(const Glib::RefPtr<Gio::AsyncResult>& result, const Glib::RefPtr<Gtk::FileDialog>& dialog) {
         try {
             auto file = dialog->open_finish(result);
@@ -82,13 +82,11 @@ private:
             std::cerr << "File opening error" << std::endl;
             return;
         }
-
         auto buffer = text_view.get_buffer();
-        // В GTK4 get_text() возвращает весь текст
         Glib::ustring text = buffer->get_text();
         outFile << text;
         outFile.close();
-        std::cout << "Сохранено в new_text_file.txt" << std::endl;
+        
     }
 };
 
