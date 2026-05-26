@@ -1,135 +1,179 @@
-#include <gtkmm.h>
+#include <gtk/gtk.h>
+#include <pango/pango.h>
+#include <fstream>
+#include <sstream>
+#include <string>
 
-class EditorToolbar : public Gtk::Window {
-public:
-    EditorToolbar() {
-        set_title("Текстовый редактор - Панель инструментов");
-        set_default_size(800, 150); // Широкое окно, небольшая высота
-        set_resizable(true);
+using namespace std;
 
-        Gtk::Box *main_box = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 0);
-        set_child(*main_box);
+GtkWidget* textView;
 
-        m_toolbar = Gtk::make_managed<Gtk::Toolbar>();
-        main_box->append(*m_toolbar);
+void highlight_syntax() {
+    GtkTextBuffer* buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textView));
+    GtkTextIter start, end;
 
-        auto icon_theme = Gtk::IconTheme::get_for_display(get_display());
-        
-        // 1. Кнопка "Создать"
-        auto new_btn = Gtk::make_managed<Gtk::ToolButton>();
-        new_btn->set_icon_name("document-new");
-        new_btn->set_tooltip_text("Создать новый файл");
-        new_btn->signal_clicked().connect([]() {
-            std::cout << "Нажата кнопка: Создать" << std::endl;
-        });
-        m_toolbar->append(*new_btn);
+    gtk_text_buffer_get_start_iter(buffer, &start);
+    gtk_text_buffer_get_end_iter(buffer, &end);
 
-        // 2. Кнопка "Открыть"
-        auto open_btn = Gtk::make_managed<Gtk::ToolButton>();
-        open_btn->set_icon_name("document-open");
-        open_btn->set_tooltip_text("Открыть файл");
-        open_btn->signal_clicked().connect([]() {
-            std::cout << "Нажата кнопка: Открыть" << std::endl;
-        });
-        m_toolbar->append(*open_btn);
+    GtkTextTagTable= table = gtk_text_buffer_get_tag_table(buffer);
+    GtkTextTag* blueTag = gtk_text_tag_table_lookup(table, "blue");
+    GtkTextTag* greenTag = gtk_text_tag_table_lookup(table, "green");
+    GtkTextTag* redTag = gtk_text_tag_table_lookup(table, "red");
 
-        // 3. Кнопка "Сохранить"
-        auto save_btn = Gtk::make_managed<Gtk::ToolButton>();
-        save_btn->set_icon_name("document-save");
-        save_btn->set_tooltip_text("Сохранить");
-        save_btn->signal_clicked().connect([]() {
-            std::cout << "Нажата кнопка: Сохранить" << std::endl;
-        });
-        m_toolbar->append(*save_btn);
+    if (blueTag) gtk_text_buffer_remove_tag(buffer, blueTag, &start, &end);
+    if (greenTag) gtk_text_buffer_remove_tag(buffer, greenTag, &start, &end);
+    if (redTag) gtk_text_buffer_remove_tag(buffer, redTag, &start, &end);
 
-        m_toolbar->append(*Gtk::make_managed<Gtk::SeparatorToolItem>());
+    gchar* text = gtk_text_buffer_get_text(buffer, &start, &end, FALSE);
+    string content = text;
 
-        // 5. Кнопка "Вырезать"
-        auto cut_btn = Gtk::make_managed<Gtk::ToolButton>();
-        cut_btn->set_icon_name("edit-cut");
-        cut_btn->set_tooltip_text("Вырезать");
-        cut_btn->signal_clicked().connect([]() {
-            std::cout << "Нажата кнопка: Вырезать" << std::endl;
-        });
-        m_toolbar->append(*cut_btn);
+    auto apply_keyword_tag = [&](const string& keyword, GtkTextTag* tag) {
+        size_t pos = content.find(keyword);
+        while (pos != string::npos) {
+            bool left_ok = (pos == 0 || !g_ascii_isalnum(content[pos - 1]));
+            bool right_ok = (pos + keyword.length() == content.length() || !g_ascii_isalnum(content[pos + keyword.length()]));
 
-        // 6. Кнопка "Копировать"
-        auto copy_btn = Gtk::make_managed<Gtk::ToolButton>();
-        copy_btn->set_icon_name("edit-copy");
-        copy_btn->set_tooltip_text("Копировать");
-        copy_btn->signal_clicked().connect([]() {
-            std::cout << "Нажата кнопка: Копировать" << std::endl;
-        });
-        m_toolbar->append(*copy_btn);
+            if (left_ok && right_ok && tag) {
+                GtkTextIter wordStart, wordEnd;
+                gtk_text_buffer_get_iter_at_offset(buffer, &wordStart, pos);
+                gtk_text_buffer_get_iter_at_offset(buffer, &wordEnd, pos + keyword.length());
+                gtk_text_buffer_apply_tag(buffer, tag, &wordStart, &wordEnd);
+            }
+            pos = content.find(keyword, pos + 1);
+        }
+    };
 
-        // 7. Кнопка "Вставить"
-        auto paste_btn = Gtk::make_managed<Gtk::ToolButton>();
-        paste_btn->set_icon_name("edit-paste");
-        paste_btn->set_tooltip_text("Вставить");
-        paste_btn->signal_clicked().connect([]() {
-            std::cout << "Нажата кнопка: Вставить" << std::endl;
-        });
-        m_toolbar->append(*paste_btn);
+    apply_keyword_tag("int", blueTag);
+    apply_keyword_tag("return", redTag);
+    apply_keyword_tag("if", greenTag);
 
-        m_toolbar->append(*Gtk::make_managed<Gtk::SeparatorToolItem>());
+    g_free(text);
+}
 
-        // 9. Кнопка "Отменить"
-        auto undo_btn = Gtk::make_managed<Gtk::ToolButton>();
-        undo_btn->set_icon_name("edit-undo");
-        undo_btn->set_tooltip_text("Отменить");
-        undo_btn->signal_clicked().connect([]() {
-            std::cout << "Нажата кнопка: Отменить" << std::endl;
-        });
-        m_toolbar->append(*undo_btn);
+void create_file(GtkWidget* widget, gpointer data) {
+    GtkTextBuffer* buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textView));
+    gtk_text_buffer_set_text(buffer, "", -1);
+}
 
-        // 10. Кнопка "Повторить"
-        auto redo_btn = Gtk::make_managed<Gtk::ToolButton>();
-        redo_btn->set_icon_name("edit-redo");
-        redo_btn->set_tooltip_text("Повторить");
-        redo_btn->signal_clicked().connect([]() {
-            std::cout << "Нажата кнопка: Повторить" << std::endl;
-        });
-        m_toolbar->append(*redo_btn);
+void save_file(GtkWidget* widget, gpointer data) {
+    GtkTextBuffer* buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textView));
+    GtkTextIter start, end;
+    gtk_text_buffer_get_start_iter(buffer, &start);
+    gtk_text_buffer_get_end_iter(buffer, &end);
 
-        m_toolbar->append(*Gtk::make_managed<Gtk::SeparatorToolItem>());
+    gchar* text = gtk_text_buffer_get_text(buffer, &start, &end, FALSE);
+    ofstream file("note.txt");
+    if (file.is_open()) {
+        file << text;
+    }
+    g_free(text);
+}
 
-        // 12. Кнопка "Поиск"
-        auto find_btn = Gtk::make_managed<Gtk::ToolButton>();
-        find_btn->set_icon_name("edit-find");
-        find_btn->set_tooltip_text("Поиск");
-        find_btn->signal_clicked().connect([]() {
-            std::cout << "Нажата кнопка: Поиск" << std::endl;
-        });
-        m_toolbar->append(*find_btn);
+void open_file(GtkWidget* widget, gpointer data) {
+    ifstream file("note.txt");
+    if (!file.is_open()) return;
 
-        // 13. Кнопка "Настройки"
-        auto settings_btn = Gtk::make_managed<Gtk::ToolButton>();
-        settings_btn->set_icon_name("preferences-system");
-        settings_btn->set_tooltip_text("Настройки");
-        settings_btn->signal_clicked().connect([]() {
-            std::cout << "Нажата кнопка: Настройки" << std::endl;
-        });
-        m_toolbar->append(*settings_btn);
+    stringstream buffer;
+    buffer << file.rdbuf();
 
-        // Добавляем текстовые кнопки-дублёры (простые Gtk::Button)
-        std::vector<std::string> labels = {"Жирный", "Курсив", "Подчёркнутый", "Цвет"};
-        for (const auto& label : labels) {
-            auto btn = Gtk::make_managed<Gtk::Button>(label);
-            btn->signal_clicked().connect([label]() {
-                std::cout << "Нажата кнопка: " << label << std::endl;
-            });
-            button_box->append(*btn);
+    GtkTextBuffer* textBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textView));
+    
+    // Временное отключение функции во избежание рекурсии
+    g_signal_handlers_block_by_func(textBuffer, (gpointer)+[](GtkTextBuffer*, gpointer){}, NULL);
+    
+    gtk_text_buffer_set_text(textBuffer, buffer.str().c_str(), -1);
+    highlight_syntax();
+    
+    g_signal_handlers_unblock_by_func(textBuffer, (gpointer)+[](GtkTextBuffer*, gpointer){}, NULL);
+}
+
+void apply_format_tag(const gchar* tag_name) {
+    GtkTextBuffer* buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textView));
+    GtkTextIter start, end;
+
+    if (gtk_text_buffer_get_selection_bounds(buffer, &start, &end)) {
+        GtkTextTagTable* table = gtk_text_buffer_get_tag_table(buffer);
+        GtkTextTag* tag = gtk_text_tag_table_lookup(table, tag_name);
+
+        if (tag) {
+            if (gtk_text_iter_has_tag(&start, tag) && gtk_text_iter_has_tag(&end, tag)) {
+                gtk_text_buffer_remove_tag(buffer, tag, &start, &end);
+            } else {
+                gtk_text_buffer_apply_tag(buffer, tag, &start, &end);
+            }
         }
     }
+}
 
-private:
-    Gtk::Toolbar* m_toolbar = nullptr;
-};
+void on_bold_clicked(GtkWidget* widget, gpointer data) { apply_format_tag("bold"); }
+void on_italic_clicked(GtkWidget* widget, gpointer data) { apply_format_tag("italic"); }
+void on_underline_clicked(GtkWidget* widget, gpointer data) { apply_format_tag("underline"); }
+
+void on_app_activate(GtkApplication* app, gpointer user_data) {
+    GtkWidget* window = gtk_application_window_new(app);
+    gtk_window_set_title(GTK_WINDOW(window), "Word & Code Editor (GTK 4)");
+    gtk_window_set_default_size(GTK_WINDOW(window), 900, 600);
+
+    GtkWidget* vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+    gtk_window_set_child(GTK_WINDOW(window), vbox);
+
+    GtkWidget* hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+    gtk_box_append(GTK_BOX(vbox), hbox);
+
+    GtkWidget* btnNew = gtk_button_new_with_label("Создать");
+    GtkWidget* btnOpen = gtk_button_new_with_label("Открыть");
+    GtkWidget* btnSave = gtk_button_new_with_label("Сохранить");
+    
+    GtkWidget* btnBold = gtk_button_new_with_label("Ж");
+    GtkWidget* btnItalic = gtk_button_new_with_label("К");
+    GtkWidget* btnUnderline = gtk_button_new_with_label("Ч");
+
+    gtk_box_append(GTK_BOX(hbox), btnNew);
+    gtk_box_append(GTK_BOX(hbox), btnOpen);
+    gtk_box_append(GTK_BOX(hbox), btnSave);
+    gtk_box_append(GTK_BOX(hbox), gtk_separator_new(GTK_ORIENTATION_VERTICAL));
+    gtk_box_append(GTK_BOX(hbox), btnBold);
+    gtk_box_append(GTK_BOX(hbox), btnItalic);
+    gtk_box_append(GTK_BOX(hbox), btnUnderline);
+
+    g_signal_connect(btnNew, "clicked", G_CALLBACK(create_file), NULL);
+    g_signal_connect(btnOpen, "clicked", G_CALLBACK(open_file), NULL);
+    g_signal_connect(btnSave, "clicked", G_CALLBACK(save_file), NULL);
+    
+    g_signal_connect(btnBold, "clicked", G_CALLBACK(on_bold_clicked), NULL);
+    g_signal_connect(btnItalic, "clicked", G_CALLBACK(on_italic_clicked), NULL);
+    g_signal_connect(btnUnderline, "clicked", G_CALLBACK(on_underline_clicked), NULL);
+
+    textView = gtk_text_view_new();
+    gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textView), GTK_WRAP_WORD);
+
+    GtkTextBuffer* buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textView));
+
+    gtk_text_buffer_create_tag(buffer, "blue", "foreground", "blue", NULL);
+    gtk_text_buffer_create_tag(buffer, "green", "foreground", "darkgreen", NULL);
+    gtk_text_buffer_create_tag(buffer, "red", "foreground", "red", NULL);
+
+    gtk_text_buffer_create_tag(buffer, "bold", "weight", PANGO_WEIGHT_BOLD, NULL);
+    gtk_text_buffer_create_tag(buffer, "italic", "style", PANGO_STYLE_ITALIC, NULL);
+    gtk_text_buffer_create_tag(buffer, "underline", "underline", PANGO_UNDERLINE_SINGLE, NULL);
+
+    g_signal_connect(buffer, "changed", G_CALLBACK(+[](GtkTextBuffer*, gpointer) { highlight_syntax(); }), NULL);
+
+    GtkWidget* scroll = gtk_scrolled_window_new();
+    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scroll), textView);
+    
+    gtk_widget_set_vexpand(scroll, TRUE);
+    gtk_box_append(GTK_BOX(vbox), scroll);
+
+    gtk_window_present(GTK_WINDOW(window));
+}
 
 int main(int argc, char* argv[]) {
-    auto app = Gtk::Application::create("org.gtkmm.example.editor_buttons");
+    GtkApplication* app = gtk_application_new("org.gtk.example.wordeditor", G_APPLICATION_DEFAULT_FLAGS);
+    g_signal_connect(app, "activate", G_CALLBACK(on_app_activate), NULL);
 
-    EditorToolbar window;
+    int status = g_application_run(G_APPLICATION(app), argc, argv);
+    g_object_unref(app);
 
-    return app->run(window, argc, argv);
+    return status;
 }
