@@ -15,7 +15,7 @@ void highlight_syntax() {
     gtk_text_buffer_get_start_iter(buffer, &start);
     gtk_text_buffer_get_end_iter(buffer, &end);
 
-    GtkTextTagTable= table = gtk_text_buffer_get_tag_table(buffer);
+    GtkTextTagTable* table = gtk_text_buffer_get_tag_table(buffer);
     GtkTextTag* blueTag = gtk_text_tag_table_lookup(table, "blue");
     GtkTextTag* greenTag = gtk_text_tag_table_lookup(table, "green");
     GtkTextTag* redTag = gtk_text_tag_table_lookup(table, "red");
