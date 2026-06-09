@@ -1,0 +1,327 @@
+#include <iostream>
+#include <vector>
+#include <SFML/Graphics.hpp>
+#include <string>
+
+using namespace std;
+using namespace sf;
+
+struct TreeNode {
+    int value;
+    TreeNode* leftChild;
+    TreeNode* rightChild;
+
+    TreeNode(int val) {
+        value = val;
+        leftChild = nullptr;
+        rightChild = nullptr;
+    }
+};
+
+class BSTree {
+public:
+    BSTree() {
+        root = nullptr;
+    }
+
+    ~BSTree() {
+        destroyTree(root);
+    }
+
+    void add(int val) {
+        root = addNode(root, val);
+    }
+
+    bool contains(int val) {
+        return containsNode(root, val);
+    }
+
+    void erase(int val) {
+        root = removeNode(root, val);
+    }
+
+    vector<int> preorderTraversal() {
+        vector<int> result;
+        preorder(root, result);
+        return result;
+    }
+
+    vector<int> inorderTraversal() {
+        vector<int> result;
+        inorder(root, result);
+        return result;
+    }
+
+    vector<int> postorderTraversal() {
+        vector<int> result;
+        postorder(root, result);
+        return result;
+    }
+
+    bool isEmpty() {
+        return root == nullptr;
+    }
+
+    TreeNode* getRoot() { return root; }
+
+    void rotateLeft(int val) {
+        root = findAndRotateLeft(root, val);
+    }
+
+    void rotateRight(int val) {
+        root = findAndRotateRight(root, val);
+    }
+
+private:
+    TreeNode* root;
+
+    TreeNode* addNode(TreeNode* node, int val) {
+        if (node == nullptr) {
+            return new TreeNode(val);
+        }
+
+        if (val < node->value) {
+            node->leftChild = addNode(node->leftChild, val);
+        } else if (val > node->value) {
+            node->rightChild = addNode(node->rightChild, val);
+        }
+
+        return node;
+    }
+
+    bool containsNode(TreeNode* node, int val) {
+        if (node == nullptr) return false;
+
+        if (node->value == val) return true;
+
+        if (val < node->value) {
+            return containsNode(node->leftChild, val);
+        } else {
+            return containsNode(node->rightChild, val);
+        }
+    }
+
+    TreeNode* findMinimum(TreeNode* node) {
+        while (node->leftChild != nullptr) {
+            node = node->leftChild;
+        }
+        return node;
+    }
+
+    TreeNode* removeNode(TreeNode* node, int val) {
+        if (node == nullptr) return nullptr;
+
+        if (val < node->value) {
+            node->leftChild = removeNode(node->leftChild, val);
+        } else if (val > node->value) {
+            node->rightChild = removeNode(node->rightChild, val);
+        } else {
+            if (node->leftChild == nullptr && node->rightChild == nullptr) {
+                delete node;
+                return nullptr;
+            } else if (node->leftChild == nullptr) {
+                TreeNode* child = node->rightChild;
+                delete node;
+                return child;
+            } else if (node->rightChild == nullptr) {
+                TreeNode* child = node->leftChild;
+                delete node;
+                return child;
+            } else {
+                TreeNode* minNode = findMinimum(node->rightChild);
+                node->value = minNode->value;
+                node->rightChild = removeNode(node->rightChild, minNode->value);
+            }
+        }
+        return node;
+    }
+
+    void preorder(TreeNode* node, vector<int>& result) {
+        if (node == nullptr) return;
+        result.push_back(node->value);
+        preorder(node->leftChild, result);
+        preorder(node->rightChild, result);
+    }
+
+    void inorder(TreeNode* node, vector<int>& result) {
+        if (node == nullptr) return;
+        inorder(node->leftChild, result);
+        result.push_back(node->value);
+        inorder(node->rightChild, result);
+    }
+
+    void postorder(TreeNode* node, vector<int>& result) {
+        if (node == nullptr) return;
+        postorder(node->leftChild, result);
+        postorder(node->rightChild, result);
+        result.push_back(node->value);
+    }
+
+    void destroyTree(TreeNode* node) {
+        if (node == nullptr) return;
+        destroyTree(node->leftChild);
+        destroyTree(node->rightChild);
+        delete node;
+    }
+
+    TreeNode* performLeftRotation(TreeNode* node) {
+        TreeNode* newRoot = node->rightChild;
+        node->rightChild = newRoot->leftChild;
+        newRoot->leftChild = node;
+        return newRoot;
+    }
+
+    TreeNode* performRightRotation(TreeNode* node) {
+        TreeNode* newRoot = node->leftChild;
+        node->leftChild = newRoot->rightChild;
+        newRoot->rightChild = node;
+        return newRoot;
+    }
+
+    TreeNode* findAndRotateLeft(TreeNode* node, int val) {
+        if (node == nullptr) return nullptr;
+        if (node->value == val) {
+            if (node->rightChild == nullptr) {
+                cout << "No right subtree\n";
+                return node;
+            }
+            return performLeftRotation(node);
+        }
+        if (val < node->value)
+            node->leftChild = findAndRotateLeft(node->leftChild, val);
+        else
+            node->rightChild = findAndRotateLeft(node->rightChild, val);
+        return node;
+    }
+
+    TreeNode* findAndRotateRight(TreeNode* node, int val) {
+        if (node == nullptr) return nullptr;
+        if (node->value == val) {
+            if (node->leftChild == nullptr) {
+                cout << "No left subtree\n";
+                return node;
+            }
+            return performRightRotation(node);
+        }
+        if (val < node->value)
+            node->leftChild = findAndRotateRight(node->leftChild, val);
+        else
+            node->rightChild = findAndRotateRight(node->rightChild, val);
+        return node;
+    }
+};
+
+class TreeVisualizer {
+public:
+    TreeVisualizer() {
+        string fontPath = "C:/Users/1/source/repos/sfml2/x64/Debug/arial.ttf";
+        if (!font.loadFromFile(fontPath)) {
+            cout << "Font not loaded" << endl;
+        } else {
+            cout << "Font loaded" << endl;
+        }
+    }
+
+    void run(BSTree& tree) {
+        RenderWindow window(VideoMode(800, 600), "Binary Search Tree");
+
+        while (window.isOpen()) {
+            Event event;
+            while (window.pollEvent(event)) {
+                if (event.type == Event::Closed)
+                    window.close();
+            }
+
+            window.clear(Color(0, 0, 0));
+
+            if (!tree.isEmpty()) {
+                drawTree(window, tree.getRoot(), 400, 50, 200);
+            }
+
+            window.display();
+        }
+    }
+
+private:
+    Font font;
+
+    void drawTree(RenderWindow& window, TreeNode* node, float posX, float posY, float offsetX) {
+        if (node == nullptr) return;
+
+        if (node->leftChild) {
+            Vertex edge[] = {
+                Vertex(Vector2f(posX, posY), Color(100,100,100)),
+                Vertex(Vector2f(posX - offsetX, posY + 70), Color(100,100,100))
+            };
+            window.draw(edge, 2, Lines);
+            drawTree(window, node->leftChild, posX - offsetX, posY + 70, offsetX / 2);
+        }
+
+        if (node->rightChild) {
+            Vertex edge[] = {
+                Vertex(Vector2f(posX, posY), Color(100,100,100)),
+                Vertex(Vector2f(posX + offsetX, posY + 70), Color(100,100,100))
+            };
+            window.draw(edge, 2, Lines);
+            drawTree(window, node->rightChild, posX + offsetX, posY + 70, offsetX / 2);
+        }
+
+        CircleShape circle(25);
+        circle.setPosition(posX - 25, posY - 25);
+        circle.setFillColor(Color(100, 100, 100));
+        circle.setOutlineThickness(2);
+        window.draw(circle);
+
+        Text label;
+        label.setFont(font);
+        label.setString(to_string(node->value));
+        label.setCharacterSize(18);
+        FloatRect bounds = label.getLocalBounds();
+        label.setPosition(posX - bounds.width / 2, posY - bounds.height / 2 - 2);
+        window.draw(label);
+    }
+};
+
+int main() {
+    BSTree bst;
+
+    bst.add(50);
+    bst.add(30);
+    bst.add(65);
+    bst.add(20);
+    bst.add(21);
+    bst.add(17);
+    bst.add(71);
+    bst.add(80);
+
+    cout << "\nSearch 50: " << (bst.contains(50)) << endl;
+    cout << "Search 100: " << (bst.contains(100)) << endl;
+
+    cout << "\nDelete 30" << endl;
+    bst.erase(30);
+
+    vector<int> pre = bst.preorderTraversal();
+    for (int i = 0; i < pre.size(); i++) {
+        cout << pre[i] << " ";
+    }
+    cout << endl;
+
+    vector<int> in = bst.inorderTraversal();
+    for (int i = 0; i < in.size(); i++) {
+        cout << in[i] << " ";
+    }
+    cout << endl;
+
+    vector<int> post = bst.postorderTraversal();
+    for (int i = 0; i < post.size(); i++) {
+        cout << post[i] << " ";
+    }
+    cout << endl;
+
+    // bst.rotateRight(50);
+
+    TreeVisualizer visualizer;
+    visualizer.run(bst);
+
+    return 0;
+}
